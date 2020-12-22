@@ -71,9 +71,10 @@ export default {
 
     addTodoItem(todo){
       console.log(`This todo = ${this.activeCategory} while This item = ${this.categoryItem}`)
-      // if(this.activeCategory == this.categoryItem){
-        this.todos.push(todo);
-      // }
+      if(this.activeCategory == this.categoryItem){
+        // this.todos.push(todo);
+        console.log(this.todos + todo)
+      }
       
     },
 

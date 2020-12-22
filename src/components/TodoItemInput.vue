@@ -27,7 +27,7 @@ export default {
     emitToParent() {
       if (this.text == "") return;
 
-      this.$emit("addTodo", this.text);
+      this.$emit("add-Todo", this.text);
       this.text = "";
     },
   },
