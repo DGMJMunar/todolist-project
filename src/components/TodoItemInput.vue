@@ -4,6 +4,7 @@
     placeholder="ADD ITEM"
     onfocus="this.placeholder = ''"
     onblur="this.placeholder='ADD ITEM'"
+    ref = "todoItemInput"
     v-model="text"
     v-on:keyup="onKeyPress"
   />
@@ -20,6 +21,7 @@ export default {
     onKeyPress: function (key) {
       if (key.keyCode === 13) {
         this.emitToParent();
+        this.$refs.todoItemInput.blur();
       }
     },
     emitToParent() {

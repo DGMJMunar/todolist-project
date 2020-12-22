@@ -13,7 +13,7 @@
           <input type="text" placeholder="USERNAME" id="usernameInput"/>
         </div>
         <div id='toDoListContainer'>
-          <todo-item-list> </todo-item-list>
+          <todo-item-list v-if = hasCategories> </todo-item-list>
         </div>
       </div>
     </div>
@@ -25,13 +25,41 @@
 <script>
 import TodoItemList from "./components/TodoItemList.vue";
 import CategoryList from "./components/CategoryList.vue";
+// import { EventBus } from './main.js';
+// EventBus.$on('on-hide-todo', this.hideTodoItems());
 export default {
   name: "App",
   components: {
     "todo-item-list" : TodoItemList,
     "category-list" : CategoryList
   },
+  data(){
+    return{
+      hasCategories: Boolean
+    }
+  },
+  methods:{
+    renderNewTodo(test){
+      console.log("Category Item " + test);
+    },
+    checkCategories(status){
+      if(status) {
+        this.hasCategories = true;
+      }
+      else {
+        this.hasCategories = false;
+      }
+    }
+
+    
+  },
+  mounted (){
+    this.hasCategories = false;
+    this.EventBus.$on('check-categories-array', this.checkCategories);
+  }
 };
+
+
 </script>
 
 <style>

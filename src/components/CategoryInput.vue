@@ -4,6 +4,7 @@
     placeholder="ADD CATEGORY"
     onfocus="this.placeholder = ''"
     onblur="this.placeholder='ADD CATERGORY'"
+    ref = "categoryItemInput"
     v-model="text"
     v-on:keyup="onKeyPress"
   />
@@ -20,6 +21,7 @@ export default {
     onKeyPress: function (key) {
       if (key.keyCode === 13) {
         this.emitToParent();
+        this.$refs.categoryItemInput.blur();
       }
     },
     emitToParent() {
@@ -37,13 +39,15 @@ export default {
 
   input[type=text] {
     margin-left: 15px;
-    width: 100%;
+    width: 80%;
     background-color: none;
     background: transparent;
     border-style: none;
     font-weight: 900;
     font-size: 25px;
     color: white;
+    margin-left: 55px;
+    text-transform: uppercase;
   }
   input[type=text]:focus {
     background-color: black;
@@ -51,5 +55,6 @@ export default {
   }
   ::placeholder{
     color:#727272;
+    margin-left: 55px;
   }
 </style>

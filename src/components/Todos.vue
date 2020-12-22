@@ -1,8 +1,3 @@
-
-
-
-
-
 <template>
 <div>
     <hr>
@@ -28,5 +23,7 @@ hr{
 }
 p{
     color: #a0a0a0;
+    font-size: 25px;
+    text-transform: capitalize;
 }
 </style>
