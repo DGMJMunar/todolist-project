@@ -83,33 +83,37 @@ export default {
         this.EventBus.$emit("render-new-todo", this.todos);
       }
     },
-    sortAsc() {
-      this.todos.sort();
-    },
-    sortDesc() {
-      this.todos.sort();
-      this.todos.reverse();
-    },
-    sortDone() {
-      let tempArray = [];
-      this.todos.forEach((element, index) => {
-        if (element.todoStatus == true) {
-          tempArray.push(element);
-          this.todos.splice(index, 1);
-        }
-      });
-      Array.prototype.push.apply(this.todos, tempArray);
-    },
-    sortNotDone() {
-      let tempArray = [];
-      this.todos.forEach((element, index) => {
-        if (element.todoStatus == false) {
-          tempArray.push(element);
-          this.todos.splice(index, 1);
-        }
-      });
-      Array.prototype.push.apply(this.todos, tempArray);
-    },
+    modifyTodo(newArr){
+      this.todos = [];
+      this.todos = newArr;
+    }
+    // sortAsc() {
+    //   this.todos.sort();
+    // },
+    // sortDesc() {
+    //   this.todos.sort();
+    //   this.todos.reverse();
+    // },
+    // sortDone() {
+    //   let tempArray = [];
+    //   this.todos.forEach((element, index) => {
+    //     if (element.todoStatus == true) {
+    //       tempArray.push(element);
+    //       this.todos.splice(index, 1);
+    //     }
+    //   });
+    //   Array.prototype.push.apply(this.todos, tempArray);
+    // },
+    // sortNotDone() {
+    //   let tempArray = [];
+    //   this.todos.forEach((element, index) => {
+    //     if (element.todoStatus == false) {
+    //       tempArray.push(element);
+    //       this.todos.splice(index, 1);
+    //     }
+    //   });
+    //   Array.prototype.push.apply(this.todos, tempArray);
+    // },
   },
 
   mounted() {
@@ -117,8 +121,9 @@ export default {
     this.EventBus.$on("active-event", this.setActiveTodoEvent);
     this.EventBus.$on("added-new-todo", this.addTodoItem);
     this.EventBus.$on("pass-todo-data", this.passTodoData);
-    this.EventBus.$on("sort-todo-asc", this.sortAsc);
-    this.EventBus.$on("sort-todo-desc", this.sortDesc);
+    // this.EventBus.$on("sort-todo-asc", this.sortAsc);
+    // this.EventBus.$on("sort-todo-desc", this.sortDesc);
+    this.EventBus.$on("modify-todo", this.modifyTodo);
   },
 };
 </script>

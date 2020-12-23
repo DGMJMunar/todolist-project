@@ -16,24 +16,36 @@
           />
         </div>
         <div id="modifierContainer" v-if="hasCategories">
-          <div>
-          <b-dropdown id="dropdown-right" text="Filter" size="lg" class="m-2">
-            <b-dropdown-item-button v-on:click="sortAsc"
-              >Sort Ascending</b-dropdown-item-button
-            >
-            <b-dropdown-item-button v-on:click="sortDesc"
-              >Sort Descending</b-dropdown-item-button
-            >
-            <b-dropdown-item-button v-on:click="sortDone"
-              >Sort by Done</b-dropdown-item-button
-            >
-            <b-dropdown-item-button v-on:click="sortNotDone"
-              >Sort by Not Done</b-dropdown-item-button
-            >
-            <!-- <b-dropdown-divider></b-dropdown-divider> -->
-          </b-dropdown>
+          <div id="modifierChild-1" >
+            <!-- <div> -->
+              <b-dropdown
+                id="dropdown-right"
+                text="Filter"
+                size="lg"
+                class="m-2"
+              >
+                <b-dropdown-item-button v-on:click.once="sortAsc"
+                  >Sort Ascending</b-dropdown-item-button
+                >
+                <b-dropdown-item-button v-on:click.once="sortDesc"
+                  >Sort Descending</b-dropdown-item-button
+                >
+                <b-dropdown-item-button v-on:click.once="sortDone"
+                  >Sort by Done</b-dropdown-item-button
+                >
+                <b-dropdown-item-button v-on:click.once="sortNotDone"
+                  >Sort by Not Done</b-dropdown-item-button
+                >
+                <!-- <b-dropdown-divider></b-dropdown-divider> -->
+              </b-dropdown>
+
+              <b-button class="modifierButton">Select All</b-button>
+              <b-button class="modifierButton">Edit</b-button>
+              <b-button class="modifierButton">Delete Selected</b-button>
+              <b-button class="modifierButton">Delete All</b-button>
+            <!-- </div> -->
           </div>
-          <div id = "todoStatus">
+          <div id="todoStatus">
             <h1>STATUS</h1>
           </div>
         </div>
@@ -68,10 +80,23 @@ export default {
       this.EventBus.$emit("sort-todo-desc");
     },
     sortDone() {
+      console.log("sortDone Clicked")
       this.EventBus.$emit("sort-todo-done");
     },
     sortNotDone() {
       this.EventBus.$emit("sort-todo-not-Done");
+    },
+    selectAll(){
+      this.EventBus.$emit("mod-select-all");
+    },
+    editText(){
+      this.EventBus.$emit("mod-edit-text");
+    },
+    deleteSelected(){
+      this.EventBus.$emit("mod-delete-selected");
+    },
+    deleteAll(){
+      this.EventBus.$emit("mod-delete-all");
     },
     checkCategories(status) {
       if (status) {
@@ -162,19 +187,25 @@ li {
   display: flex;
   justify-content: space-between;
 }
-#todoStatus{
+#modifierChild-1{
+  display: flex;
+  justify-content: space-between;
+  width: 40%;
+  height: 60px;
+}
+.modifierButton{
+  width: 100px
+}
+#todoStatus {
   background-color: #404040;
   width: 12.5%;
-  display:block;
+  display: block;
   text-align: center;
   justify-content: center;
   padding-top: 7px;
 }
-#todoStatus h1{
+#todoStatus h1 {
   font-weight: bold;
   font-size: 40px;
-
-}
-#toDoListContainer {
 }
 </style>

@@ -5,8 +5,8 @@
       <b-form-checkbox
         id="checkbox-1"
         name="checkbox-1"
-        :value="todoStatus"
-        :unchecked-value="!todoStatus"
+        :value="true"
+        :unchecked-value="false"
       >
       </b-form-checkbox>
       <div id="todoItem">
@@ -41,27 +41,45 @@ export default {
       type: String,
       required: true,
     },
-    todoStatus: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
-      statusName: this.todoStatus,
       dropdownName: "Not Done",
+      todoStatus: false,
     };
   },
   methods: {
     toggleStatus(status) {
       if (status) {
         this.dropdownName = "Done";
+        this.todoStatus = true;
+        this.EventBus.$emit('send-done-todo', this.todoItem)
       } else {
         this.dropdownName = "Not Done";
+        this.todoStatus = true;
+        this.EventBus.$emit('send-not-done-todo', this.todoItem)
       }
       console.log(this.todoStatus);
     },
+    // returnTodoStatus(){
+    //   if(this.todoStatus){
+    //     this.EventBus.$emit('send-done-todo', this.todoItem)
+    //   }
+    // }
   },
+  mounted() {
+    // this.EventBus.$on("get-done-todo", this.returnTodoStatus);
+  },
+  // watch:{
+  //   "todoStatus" : function(){
+  //     if(this.todoStatus) {
+  //       this.EventBus.$emit('send-done-todo', this.todoItem)
+  //     }
+  //     else {
+  //       this.EventBus.$emit('send-not-done-todo', this.todoItem)
+  //     }
+  //   }
+  // }
 };
 </script>
 

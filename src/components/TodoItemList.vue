@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       todos: [],
+      doneTodos: [],
     };
   },
   methods: {
@@ -37,7 +38,6 @@ export default {
       this.todos.push(todoItem);
       console.log(this.todos);
       this.EventBus.$emit("added-new-todo", todoItem);
-      //   alert(todo);
     },
     renderNewTodo(todoArray) {
       console.log(this.todos);
@@ -48,32 +48,59 @@ export default {
     },
     sortAsc() {
       this.todos.sort();
+      this.EventBus.$on("modify-todo", this.todos);
       console.log(this.todos);
     },
     sortDesc() {
       this.todos.sort();
       this.todos.reverse();
+      this.EventBus.$on("modify-todo", this.todos);
       console.log(this.todos);
     },
     sortDone() {
+      console.log(this.doneTodos)
+      // this.EventBus.$emit('get-done-todo');
       let tempArray = [];
-      this.todos.forEach((element, index) => {
-        if (element.todoStatus == true) {
-          tempArray.push(element);
-          this.todos.splice(index, 1);
-        }
-      });
-      Array.prototype.push.apply(this.todos, tempArray);
+      // this.doneTodos.forEach((element, index) => {
+      //     let item = this.todos[this.todos.indexOf(element)]
+      //     console.log(item)
+      //     tempArray.push(item);
+      //     this.todos.splice(index, 1);
+        
+      // });
+      for(let i = 0; i < this.doneTodos.length; i++){
+        let index = this.todos.indexOf(this.doneTodos[i])
+        let item = this.todos[index]
+        tempArray.push(item);
+        this.todos.splice(index, 1);
+      }
+      console.log(`temp array ${tempArray}`)
+      console.log(`this.todos array ${this.todos}`)
+      // Array.prototype.push.apply(this.todos, tempArray);
+      // console.log(`this.todos array ${this.todos}`)
+      // this.EventBus.$on("modify-todo", this.todos);
+    },
+    setDone(todoItem){
+      if(!this.doneTodos.includes(todoItem)){
+        this.doneTodos.push(todoItem)
+        console.log(this.doneTodos)
+      }
+      
+    },
+    setNotDone(todoItem){
+      this.doneTodos.splice(this.doneTodos.indexOf(todoItem), 1);
+      console.log(this.doneTodos)
     },
     sortNotDone() {
-      let tempArray = [];
+      // let tempArray = [];
       this.todos.forEach((element, index) => {
         if (element.todoStatus == false) {
-          tempArray.push(element);
+          this.doneTodos.push(element);
           this.todos.splice(index, 1);
         }
       });
-      Array.prototype.push.apply(this.todos, tempArray);
+      Array.prototype.push.apply(this.todos, this.doneTodos);
+      this.EventBus.$on("modify-todo", this.todos);
     },
   },
   mounted() {
@@ -82,6 +109,8 @@ export default {
     this.EventBus.$on("sort-todo-desc", this.sortDesc);
     this.EventBus.$on("sort-todo-done", this.sortDone);
     this.EventBus.$on("sort-todo-not-done", this.sortNotDone);
+    this.EventBus.$on("send-done-todo", this.setDone)
+    this.EventBus.$on("send-not-done-todo", this.setNotDone)
   },
 };
 </script>
