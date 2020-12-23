@@ -9,7 +9,6 @@ Vue.use(BootstrapVue)
 
 // export const EventBus = new Vue();
 Vue.prototype.EventBus = new Vue(); // Global event bus
-
 new Vue({
   render: h => h(App),
 }).$mount('#app')

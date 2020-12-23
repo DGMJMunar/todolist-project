@@ -18,11 +18,11 @@ export default {
       type: String,
       required: true,
     },
-    activeCategory : {
+    activeCategory: {
       type: String,
       required: true,
-      default: 'notThis',
-    }
+      default: "notThis",
+    },
   },
   data() {
     const vm = this;
@@ -39,7 +39,7 @@ export default {
   methods: {
     setActiveTodoEvent(item) {
       if (item == this.categoryItem) {
-        console.log("ITEM : " + item)
+        console.log("ITEM : " + item);
         // this.EventBus.$emit("render-new-todo", this.categoryItem, this.todos);
         this.EventBus.$emit("set-active-category", this.categoryItem);
         if (this.divStyle != "isSelected")
@@ -48,7 +48,7 @@ export default {
     },
 
     setActiveTodo() {
-      console.log('set active todo event');
+      console.log("set active todo event");
       // this.EventBus.$emit("render-new-todo", this.categoryItem, this.todos);
       this.EventBus.$emit("set-active-category", this.categoryItem);
       this.EventBus.$emit("reset-category-div");
@@ -69,20 +69,47 @@ export default {
       }
     },
 
-    addTodoItem(todo){
-      console.log(`This todo = ${this.activeCategory} while This item = ${this.categoryItem}`)
-      if(this.activeCategory == this.categoryItem){
-        // this.todos.push(todo);
-        console.log(this.todos + todo)
+    addTodoItem(todo) {
+      console.log(
+        `This todo = ${this.activeCategory} while This item = ${this.categoryItem}`
+      );
+      if (this.activeCategory == this.categoryItem) {
+        console.log(this.todos + todo);
       }
-      
     },
 
-    passTodoData(item){
+    passTodoData(item) {
       if (item == this.categoryItem) {
-        this.EventBus.$emit("render-new-todo", this.todos)
+        this.EventBus.$emit("render-new-todo", this.todos);
       }
-    }
+    },
+    sortAsc() {
+      this.todos.sort();
+    },
+    sortDesc() {
+      this.todos.sort();
+      this.todos.reverse();
+    },
+    sortDone() {
+      let tempArray = [];
+      this.todos.forEach((element, index) => {
+        if (element.todoStatus == true) {
+          tempArray.push(element);
+          this.todos.splice(index, 1);
+        }
+      });
+      Array.prototype.push.apply(this.todos, tempArray);
+    },
+    sortNotDone() {
+      let tempArray = [];
+      this.todos.forEach((element, index) => {
+        if (element.todoStatus == false) {
+          tempArray.push(element);
+          this.todos.splice(index, 1);
+        }
+      });
+      Array.prototype.push.apply(this.todos, tempArray);
+    },
   },
 
   mounted() {
@@ -90,6 +117,8 @@ export default {
     this.EventBus.$on("active-event", this.setActiveTodoEvent);
     this.EventBus.$on("added-new-todo", this.addTodoItem);
     this.EventBus.$on("pass-todo-data", this.passTodoData);
+    this.EventBus.$on("sort-todo-asc", this.sortAsc);
+    this.EventBus.$on("sort-todo-desc", this.sortDesc);
   },
 };
 </script>

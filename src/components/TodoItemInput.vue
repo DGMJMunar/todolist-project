@@ -51,4 +51,5 @@ export default {
   ::placeholder{
     color:#727272;
   }
+  
 </style>

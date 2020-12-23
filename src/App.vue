@@ -1,65 +1,95 @@
 <template>
-
   <div id="app">
     <div id="mainContainer">
       <div id="leftSide">
         <h1 class="text-left title">TO-DO LIST</h1>
         <category-list></category-list>
-        
       </div>
 
       <div id="rightSide">
         <div id="usernameContainer">
-          <input type="text" placeholder="USERNAME" id="usernameInput"/>
+          <input
+            type="text"
+            :placeholder="inputString"
+            id="usernameInput"
+            disabled="disabled"
+          />
         </div>
-        <div id='toDoListContainer'>
-          <todo-item-list v-if = hasCategories> </todo-item-list>
+        <div id="modifierContainer" v-if="hasCategories">
+          <div>
+          <b-dropdown id="dropdown-right" text="Filter" size="lg" class="m-2">
+            <b-dropdown-item-button v-on:click="sortAsc"
+              >Sort Ascending</b-dropdown-item-button
+            >
+            <b-dropdown-item-button v-on:click="sortDesc"
+              >Sort Descending</b-dropdown-item-button
+            >
+            <b-dropdown-item-button v-on:click="sortDone"
+              >Sort by Done</b-dropdown-item-button
+            >
+            <b-dropdown-item-button v-on:click="sortNotDone"
+              >Sort by Not Done</b-dropdown-item-button
+            >
+            <!-- <b-dropdown-divider></b-dropdown-divider> -->
+          </b-dropdown>
+          </div>
+          <div id = "todoStatus">
+            <h1>STATUS</h1>
+          </div>
+        </div>
+        <div id="toDoListContainer">
+          <todo-item-list v-if="hasCategories"> </todo-item-list>
         </div>
       </div>
     </div>
-
-    
   </div>
 </template>
 
 <script>
 import TodoItemList from "./components/TodoItemList.vue";
 import CategoryList from "./components/CategoryList.vue";
-// import { EventBus } from './main.js';
-// EventBus.$on('on-hide-todo', this.hideTodoItems());
 export default {
   name: "App",
   components: {
-    "todo-item-list" : TodoItemList,
-    "category-list" : CategoryList
+    "todo-item-list": TodoItemList,
+    "category-list": CategoryList,
   },
-  data(){
-    return{
-      hasCategories: Boolean
-    }
+  data() {
+    return {
+      hasCategories: Boolean,
+      inputString: "USERNAME",
+    };
   },
-  methods:{
-    renderNewTodo(test){
-      console.log("Category Item " + test);
+  methods: {
+    sortAsc() {
+      this.EventBus.$emit("sort-todo-asc");
     },
-    checkCategories(status){
-      if(status) {
+    sortDesc() {
+      this.EventBus.$emit("sort-todo-desc");
+    },
+    sortDone() {
+      this.EventBus.$emit("sort-todo-done");
+    },
+    sortNotDone() {
+      this.EventBus.$emit("sort-todo-not-Done");
+    },
+    checkCategories(status) {
+      if (status) {
         this.hasCategories = true;
-      }
-      else {
+      } else {
         this.hasCategories = false;
       }
-    }
-
-    
+    },
+    init() {
+      this.inputString = prompt("Welcome, Enter your name!", "USERNAME");
+    },
   },
-  mounted (){
+  mounted() {
     this.hasCategories = false;
-    this.EventBus.$on('check-categories-array', this.checkCategories);
-  }
+    this.EventBus.$on("check-categories-array", this.checkCategories);
+    // this.inputString = prompt("Welcome, Enter your name!", "USERNAME");
+  },
 };
-
-
 </script>
 
 <style>
@@ -69,19 +99,23 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #676767;
   background-color: #242424;
-  
-  height: 100vh;
+
+  min-height: 100vh;
+  height: 100%;
+  max-height: auto;
 }
 #mainContainer {
   display: flex;
+  min-height: 100vh;
   height: 100%;
-  
+  max-height: auto;
+  padding: 25px;
 }
 #leftSide {
   background-color: #373737;
   width: 15%;
 }
-.title{
+.title {
   padding: 20px 30px;
 }
 
@@ -90,11 +124,10 @@ export default {
   width: 85%;
   padding: 20px 30px;
 }
-#usernameContainer{
+#usernameContainer {
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  
 }
 #usernameInput {
   background-color: none;
@@ -107,25 +140,41 @@ export default {
   font-size: 25px;
   color: #727272;
 }
-::placeholder{
+::placeholder {
   display: flex;
   justify-self: flex-end;
 }
 
-#categoryContainer{
+#categoryContainer {
   padding-top: 175px;
   margin-left: -30px;
 }
 
-ul{
+ul {
   list-style: none;
 }
-li{
-  font-size:24px;
+li {
+  font-size: 24px;
   text-transform: uppercase;
 }
-#toDoListContainer{
-margin-top: 185px;
+#modifierContainer {
+  margin-top: 120px;
+  display: flex;
+  justify-content: space-between;
 }
+#todoStatus{
+  background-color: #404040;
+  width: 12.5%;
+  display:block;
+  text-align: center;
+  justify-content: center;
+  padding-top: 7px;
+}
+#todoStatus h1{
+  font-weight: bold;
+  font-size: 40px;
 
+}
+#toDoListContainer {
+}
 </style>
