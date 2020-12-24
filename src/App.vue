@@ -119,7 +119,7 @@ export default {
   mounted() {
     this.hasCategories = false;
     this.EventBus.$on("check-categories-array", this.checkCategories);
-    // this.inputString = prompt("Welcome, Enter your name!", "USERNAME");
+    this.inputString = prompt("Welcome, Enter your name!", "USERNAME");
   },
 };
 </script>
