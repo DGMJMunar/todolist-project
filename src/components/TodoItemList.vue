@@ -23,6 +23,7 @@ export default {
     return {
       todos: [],
       doneTodos: [],
+      selectedTodos: [],
     };
   },
   methods: {
@@ -47,70 +48,139 @@ export default {
       this.todos = todoArray;
     },
     sortAsc() {
+      this.reassignStatus(false)
       this.todos.sort();
-      this.EventBus.$on("modify-todo", this.todos);
+      this.reassignStatus(true)
+      this.EventBus.$emit("modify-todo", this.todos);
       console.log(this.todos);
     },
     sortDesc() {
+      this.reassignStatus(false)
       this.todos.sort();
       this.todos.reverse();
-      this.EventBus.$on("modify-todo", this.todos);
+      this.reassignStatus(true)
+      this.EventBus.$emit("modify-todo", this.todos);
       console.log(this.todos);
     },
     sortDone() {
       console.log(this.doneTodos)
-      // this.EventBus.$emit('get-done-todo');
       let tempArray = [];
-      // this.doneTodos.forEach((element, index) => {
-      //     let item = this.todos[this.todos.indexOf(element)]
-      //     console.log(item)
-      //     tempArray.push(item);
-      //     this.todos.splice(index, 1);
-        
-      // });
       for(let i = 0; i < this.doneTodos.length; i++){
         let index = this.todos.indexOf(this.doneTodos[i])
         let item = this.todos[index]
         tempArray.push(item);
+        this.statusEmitter(false, item)
         this.todos.splice(index, 1);
       }
-      console.log(`temp array ${tempArray}`)
-      console.log(`this.todos array ${this.todos}`)
-      // Array.prototype.push.apply(this.todos, tempArray);
-      // console.log(`this.todos array ${this.todos}`)
-      // this.EventBus.$on("modify-todo", this.todos);
+      this.$nextTick(() => {
+        for(let j = tempArray.length - 1; j >= 0; j--){
+          this.todos.unshift(tempArray[j]);
+          this.statusEmitter(true, tempArray[j])
+        }
+      })
+      this.EventBus.$emit("modify-todo", this.todos);
+    },
+    sortNotDone() {
+      console.log(this.doneTodos)
+      let tempArray = [];
+      for(let i = 0; i < this.doneTodos.length; i++){
+        let index = this.todos.indexOf(this.doneTodos[i])
+        let item = this.todos[index]
+        tempArray.push(item);
+        this.statusEmitter(false, item)
+        this.todos.splice(index, 1);
+      }
+      this.$nextTick(() => {
+        for(let j = 0; j < tempArray.length; j++){
+        this.todos.push(tempArray[j]);
+        this.statusEmitter(true, tempArray[j])
+      }
+      })
+      this.EventBus.$emit("modify-todo", this.todos);
+      
     },
     setDone(todoItem){
       if(!this.doneTodos.includes(todoItem)){
         this.doneTodos.push(todoItem)
-        console.log(this.doneTodos)
+        this.EventBus.$emit('modify-done-todo', this.doneTodos)
       }
-      
     },
     setNotDone(todoItem){
-      this.doneTodos.splice(this.doneTodos.indexOf(todoItem), 1);
-      console.log(this.doneTodos)
+      if(this.doneTodos.includes(todoItem)){
+        this.doneTodos.splice(this.doneTodos.indexOf(todoItem), 1);
+        this.EventBus.$emit('modify-done-todo', this.doneTodos)
+      }
     },
-    sortNotDone() {
-      // let tempArray = [];
-      this.todos.forEach((element, index) => {
-        if (element.todoStatus == false) {
-          this.doneTodos.push(element);
-          this.todos.splice(index, 1);
+    statusEmitter(bool, item){
+      this.$nextTick(() =>{
+        if(bool){
+          this.EventBus.$emit('set-status-done', item);
         }
-      });
-      Array.prototype.push.apply(this.todos, this.doneTodos);
-      this.EventBus.$on("modify-todo", this.todos);
+        else{
+          this.EventBus.$emit('set-status-not-done', item);
+        }
+      })
     },
+    reassignStatus(bool){
+      if(bool){
+        this.doneTodos.forEach(element => {
+          this.statusEmitter(true, element)
+        })
+      }
+      else{
+        this.doneTodos.forEach(element => {
+          this.statusEmitter(false, element)
+        })
+      }
+    },
+    editTodoItem(previousItem,item){
+      this.todos[this.todos.indexOf(previousItem)] = item;
+      this.renderNewTodo(this.todos)
+    },
+    setSelected(todoItem){
+      if(!this.selectedTodos.includes(todoItem)){
+        this.selectedTodos.push(todoItem)
+      }
+    },
+    setUnselected(todoItem){
+      if(this.selectedTodos.includes(todoItem)){
+        this.selectedTodos.splice(this.selectedTodos.indexOf(todoItem), 1);
+      }
+    },
+    deleteSelected(){
+      if(this.selectedTodos.length == 0) return;
+      
+      console.log("DELETE SELECTED")
+      this.selectedTodos.forEach((element, index) => {
+        console.log(element);
+        this.todos.splice(index, 1);
+      })
+    },
+    deleteAll(){
+      this.todos = [];
+      this.doneTodos = [];
+      this.EventBus.$emit("modify-todo", []);
+      this.EventBus.$emit("modify-done-todo", []);
+    }
   },
+   
   mounted() {
     this.EventBus.$on("render-new-todo", this.renderNewTodo);
+    // Sort Events
     this.EventBus.$on("sort-todo-asc", this.sortAsc);
     this.EventBus.$on("sort-todo-desc", this.sortDesc);
     this.EventBus.$on("sort-todo-done", this.sortDone);
     this.EventBus.$on("sort-todo-not-done", this.sortNotDone);
+    // Status Change Events
     this.EventBus.$on("send-done-todo", this.setDone)
     this.EventBus.$on("send-not-done-todo", this.setNotDone)
+    //Item Edit Events
+    this.EventBus.$on("edit-todo-item", this.editTodoItem);
+    this.EventBus.$on("set-todo-selected", this.setSelected)
+    this.EventBus.$on("set-todo-unSelected", this.setUnselected)
+    this.EventBus.$on("mod-delete-selected", this.deleteSelected);
+    this.EventBus.$on("mod-delete-all", this.deleteAll);
+    
   },
 };
 </script>

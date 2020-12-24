@@ -34,6 +34,7 @@ export default {
         "active-event": vm.setActiveTodo,
       },
       todos: [],
+      doneTodos: []
     };
   },
   methods: {
@@ -86,6 +87,10 @@ export default {
     modifyTodo(newArr){
       this.todos = [];
       this.todos = newArr;
+    },
+    modifyDoneTodos(newArr){
+      this.doneTodos = [];
+      this.doneTodos = newArr;
     }
     // sortAsc() {
     //   this.todos.sort();
@@ -121,9 +126,8 @@ export default {
     this.EventBus.$on("active-event", this.setActiveTodoEvent);
     this.EventBus.$on("added-new-todo", this.addTodoItem);
     this.EventBus.$on("pass-todo-data", this.passTodoData);
-    // this.EventBus.$on("sort-todo-asc", this.sortAsc);
-    // this.EventBus.$on("sort-todo-desc", this.sortDesc);
     this.EventBus.$on("modify-todo", this.modifyTodo);
+    this.EventBus.$on('modify-done-todo', this.modifyDoneTodos)
   },
 };
 </script>

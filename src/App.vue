@@ -15,6 +15,7 @@
             disabled="disabled"
           />
         </div>
+        <hr>
         <div id="modifierContainer" v-if="hasCategories">
           <div id="modifierChild-1" >
             <!-- <div> -->
@@ -24,31 +25,38 @@
                 size="lg"
                 class="m-2"
               >
-                <b-dropdown-item-button v-on:click.once="sortAsc"
+                <b-dropdown-item-button v-on:click="sortAsc"
                   >Sort Ascending</b-dropdown-item-button
                 >
-                <b-dropdown-item-button v-on:click.once="sortDesc"
+                <b-dropdown-item-button v-on:click="sortDesc"
                   >Sort Descending</b-dropdown-item-button
                 >
-                <b-dropdown-item-button v-on:click.once="sortDone"
+                <b-dropdown-item-button v-on:click="sortDone"
                   >Sort by Done</b-dropdown-item-button
                 >
-                <b-dropdown-item-button v-on:click.once="sortNotDone"
+                <b-dropdown-item-button v-on:click="sortNotDone"
                   >Sort by Not Done</b-dropdown-item-button
                 >
                 <!-- <b-dropdown-divider></b-dropdown-divider> -->
               </b-dropdown>
 
-              <b-button class="modifierButton">Select All</b-button>
-              <b-button class="modifierButton">Edit</b-button>
-              <b-button class="modifierButton">Delete Selected</b-button>
-              <b-button class="modifierButton">Delete All</b-button>
+              <b-button class="modifierButton" v-on:click="selectAll">Select All</b-button>
+              <b-button class="modifierButton" v-on:click="unselectAll">Unselect All</b-button>
+              <!-- <b-button class="modifierButton" v-on:click="editText">Edit</b-button> -->
+              <b-button class="modifierButton" v-on:click="deleteSelected">Delete Selected</b-button>
+              <b-button class="modifierButton" v-on:click="deleteAll">Delete All</b-button>
             <!-- </div> -->
           </div>
           <div id="todoStatus">
             <h1>STATUS</h1>
           </div>
+          
         </div>
+        <div v-if="hasCategories" >
+          <hr>
+        <h4 >Click todo items to edit</h4>
+        </div>
+        
         <div id="toDoListContainer">
           <todo-item-list v-if="hasCategories"> </todo-item-list>
         </div>
@@ -68,7 +76,7 @@ export default {
   },
   data() {
     return {
-      hasCategories: Boolean,
+      hasCategories: false,
       inputString: "USERNAME",
     };
   },
@@ -80,14 +88,16 @@ export default {
       this.EventBus.$emit("sort-todo-desc");
     },
     sortDone() {
-      console.log("sortDone Clicked")
       this.EventBus.$emit("sort-todo-done");
     },
     sortNotDone() {
-      this.EventBus.$emit("sort-todo-not-Done");
+      this.EventBus.$emit("sort-todo-not-done");
     },
     selectAll(){
       this.EventBus.$emit("mod-select-all");
+    },
+    unselectAll(){
+      this.EventBus.$emit("mod-unselect-all");
     },
     editText(){
       this.EventBus.$emit("mod-edit-text");
@@ -104,9 +114,6 @@ export default {
       } else {
         this.hasCategories = false;
       }
-    },
-    init() {
-      this.inputString = prompt("Welcome, Enter your name!", "USERNAME");
     },
   },
   mounted() {
@@ -169,7 +176,11 @@ export default {
   display: flex;
   justify-self: flex-end;
 }
-
+h4{
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
 #categoryContainer {
   padding-top: 175px;
   margin-left: -30px;

@@ -6,10 +6,12 @@
         id="checkbox-1"
         name="checkbox-1"
         :value="true"
+        :checked="checkedStatus"
         :unchecked-value="false"
+        v-on:change="changeSelectedStatus"
       >
       </b-form-checkbox>
-      <div id="todoItem">
+      <div v-on:click="editItem" id="todoItem">
         <p>{{ todoItem }}</p>
       </div>
     </div>
@@ -46,21 +48,58 @@ export default {
     return {
       dropdownName: "Not Done",
       todoStatus: false,
+      checkedStatus: false,
+      newItem: '',
     };
   },
   methods: {
+    editItem(){
+      this.newItem = prompt("Change Todo Item", this.todoItem);
+      this.EventBus.$emit('edit-todo-item',this.todoItem, this.newItem);
+    },
     toggleStatus(status) {
       if (status) {
-        this.dropdownName = "Done";
-        this.todoStatus = true;
+        this.renameStatus(true);
         this.EventBus.$emit('send-done-todo', this.todoItem)
       } else {
-        this.dropdownName = "Not Done";
-        this.todoStatus = true;
+        this.renameStatus(false);
         this.EventBus.$emit('send-not-done-todo', this.todoItem)
       }
       console.log(this.todoStatus);
     },
+    renameStatus(bool){
+      if(bool){
+        this.dropdownName = "Done";
+        this.todoStatus = true;
+      }
+      else{
+        this.dropdownName = "Not Done";
+        this.todoStatus = false;
+      }
+    },
+    setStatusToNotDone(item){
+      if(item == this.todoItem){
+        this.renameStatus(false);
+      }
+    },
+    setStatusToDone(item){
+      if(item == this.todoItem){
+        this.renameStatus(true);
+      }
+    },
+    setSelected(){
+      console.log("received setSelected Event");
+      this.checkedStatus = true;
+    },
+    setUnselected(){
+      console.log("received setUnselected Event");
+      this.checkedStatus = false;
+    },
+    changeSelectedStatus(){
+      this.checkedStatus = !this.checkedStatus
+      this.EventBus.$emit('set-todo-selected', this.todoItem);
+      console.log(this.checkedStatus)
+    }
     // returnTodoStatus(){
     //   if(this.todoStatus){
     //     this.EventBus.$emit('send-done-todo', this.todoItem)
@@ -68,18 +107,11 @@ export default {
     // }
   },
   mounted() {
-    // this.EventBus.$on("get-done-todo", this.returnTodoStatus);
+    this.EventBus.$on('set-status-not-done', this.setStatusToNotDone);
+    this.EventBus.$on('set-status-done', this.setStatusToDone);
+    this.EventBus.$on('mod-select-all', this.setSelected);
+    this.EventBus.$on("mod-unselect-all", this.setUnselected);
   },
-  // watch:{
-  //   "todoStatus" : function(){
-  //     if(this.todoStatus) {
-  //       this.EventBus.$emit('send-done-todo', this.todoItem)
-  //     }
-  //     else {
-  //       this.EventBus.$emit('send-not-done-todo', this.todoItem)
-  //     }
-  //   }
-  // }
 };
 </script>
 
